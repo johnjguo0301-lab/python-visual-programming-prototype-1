@@ -28,7 +28,7 @@ Blockly.common.defineBlocksWithJsonArray([
             { "type": "input_statement", "name": "DO" }
         ],
         "colour": 45,
-        "tooltip": "Runs code when a specific key is pressed",
+        "tooltip": "Waits for keyboard input. NOTE: Requires user interaction and may timeout if no input provided.",
         "helpUrl": ""
     },
     {
@@ -52,7 +52,7 @@ Blockly.common.defineBlocksWithJsonArray([
         "previousStatement": null,
         "nextStatement": null,
         "colour": 45,
-        "tooltip": "Repeat the enclosed blocks forever (infinite loop)"
+        "tooltip": "Repeat forever (infinite loop). WARNING: Will timeout after 15 seconds. Use 'stop program' block or 'break' to exit."
     },
     {
         "type": "event_stop",

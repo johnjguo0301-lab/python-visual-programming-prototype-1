@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turtle Canvas Test</title>
+    <style>
+        body { background: #1e1e2e; color: white; font-family: sans-serif; padding: 20px; }
+        canvas { background: white; border: 2px solid #ccc; display: block; margin: 20px 0; }
+        button { padding: 10px 20px; margin: 5px; font-size: 14px; cursor: pointer; }
+        .log { background: #000; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>Turtle Canvas Test</h1>
+    <canvas id="turtle-canvas" width="600" height="600"></canvas>
+    <div>
+        <button onclick="testSimple()">Test Simple Line</button>
+        <button onclick="testSquare()">Test Square</button>
+        <button onclick="testCircle()">Test Circle</button>
+        <button onclick="clearCanvas()">Clear</button>
+    </div>
+    <h3>Console Log:</h3>
+    <div class="log" id="log"></div>
+
+    <script src="/static/js/canvas.js"></script>
+    <script>
+        function log(msg) {
+            const logEl = document.getElementById('log');
+            logEl.innerHTML += msg + '<br>';
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(msg);
+        }
+
+        // Initialize
+        log('Initializing canvas...');
+        TurtleCanvas.init();
+        log('Canvas initialized');
+
+        function testSimple() {
+            log('Testing simple line...');
+            const commands = [
+                {type: 'forward', distance: 100}
+            ];
+            TurtleCanvas.executeCommands(commands);
+        }
+
+        function testSquare() {
+            log('Testing square...');
+            const commands = [
+                {type: 'forward', distance: 100},
+                {type: 'right', angle: 90},
+                {type: 'forward', distance: 100},
+                {type: 'right', angle: 90},
+                {type: 'forward', distance: 100},
+                {type: 'right', angle: 90},
+                {type: 'forward', distance: 100}
+            ];
+            TurtleCanvas.executeCommands(commands);
+        }
+
+        function testCircle() {
+            log('Testing circle...');
+            const commands = [
+                {type: 'pencolor', color: 'red'},
+                {type: 'circle', radius: 50}
+            ];
+            TurtleCanvas.executeCommands(commands);
+        }
+
+        function clearCanvas() {
+            log('Clearing canvas...');
+            TurtleCanvas.clear();
+        }
+    </script>
+</body>
+</html>

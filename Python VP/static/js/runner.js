@@ -42,6 +42,25 @@ const Runner = (() => {
                 signal: abortController.signal
             });
             const data = await res.json();
+
+            if (data.turtle_commands && data.turtle_commands.length > 0) {
+                TurtleCanvas.clear();
+                PanelTabs.showCanvas();
+                TurtleCanvas.executeCommands(data.turtle_commands);
+            }
+
+            if (data.matplotlib_commands && data.matplotlib_commands.length > 0) {
+                GraphsCanvas.clear();
+                PanelTabs.showGraphs();
+                GraphsCanvas.executeCommands(data.matplotlib_commands);
+            }
+
+            if (data.processing_commands) {
+                ProcessingCanvas.clear();
+                PanelTabs.showProcessing();
+                ProcessingCanvas.executeCommands(data.processing_commands);
+            }
+
             if (data.stdout) appendOutput(data.stdout, 'stdout');
             if (data.stderr) appendOutput(data.stderr, 'stderr');
         } catch (e) {

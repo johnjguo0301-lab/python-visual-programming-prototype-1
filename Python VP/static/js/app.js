@@ -6,6 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize theme (after Blockly so workspace exists)
     Themes.init();
 
+    // Initialize tabs and canvas
+    PanelTabs.init();
+    TurtleCanvas.init();
+    GraphsCanvas.init();
+    ProcessingCanvas.init();
+
     // Block search
     BlockSearch.buildIndex(toolbox);
     var searchInput = document.getElementById('block-search');

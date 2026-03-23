@@ -76,11 +76,14 @@ Blockly.common.defineBlocksWithJsonArray([
 
 // --- loop_for_range ---
 python.pythonGenerator.forBlock['loop_for_range'] = function(block, generator) {
+  console.log('loop_for_range generator called!');
   var variable = generator.getVariableName(block.getFieldValue('VAR'));
   var start = generator.valueToCode(block, 'START', generator.ORDER_NONE) || '0';
   var end = generator.valueToCode(block, 'END', generator.ORDER_NONE) || '10';
   var body = generator.statementToCode(block, 'DO') || generator.INDENT + 'pass\n';
-  return 'for ' + variable + ' in range(' + start + ', ' + end + '):\n' + body;
+  var code = 'for ' + variable + ' in range(' + start + ', ' + end + '):\n' + body;
+  console.log('loop_for_range generated:', code);
+  return code;
 };
 
 // --- loop_for_in ---
@@ -93,7 +96,7 @@ python.pythonGenerator.forBlock['loop_for_in'] = function(block, generator) {
 
 // --- loop_while ---
 python.pythonGenerator.forBlock['loop_while'] = function(block, generator) {
-  var condition = generator.valueToCode(block, 'CONDITION', generator.ORDER_NONE) || 'True';
+  var condition = generator.valueToCode(block, 'CONDITION', generator.ORDER_NONE) || 'False';
   var body = generator.statementToCode(block, 'DO') || generator.INDENT + 'pass\n';
   return 'while ' + condition + ':\n' + body;
 };

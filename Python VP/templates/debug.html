@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turtle Debug Page</title>
+    <style>
+        body {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 { color: #89b4fa; }
+        h2 { color: #a6e3a1; margin-top: 30px; }
+        .section {
+            background: #181825;
+            border: 1px solid #313244;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        button {
+            background: #a6e3a1;
+            color: #1e1e2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 5px;
+        }
+        button:hover {
+            background: #94e2d5;
+        }
+        canvas {
+            background: white;
+            border: 2px solid #313244;
+            border-radius: 6px;
+            display: block;
+            margin: 20px 0;
+        }
+        .log {
+            background: #11111b;
+            border: 1px solid #313244;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .success { color: #a6e3a1; }
+        .error { color: #f38ba8; }
+        .info { color: #89b4fa; }
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .tab-btn {
+            background: #313244;
+            color: #cdd6f4;
+        }
+        .tab-btn.active {
+            background: #89b4fa;
+            color: #1e1e2e;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>🐢 Turtle Graphics Debug Page</h1>
+
+    <div class="section">
+        <h2>1. Module Loading Test</h2>
+        <button onclick="testModules()">Test Module Loading</button>
+        <div id="module-log" class="log"></div>
+    </div>
+
+    <div class="section">
+        <h2>2. Canvas Rendering Test</h2>
+        <canvas id="turtle-canvas" width="600" height="600"></canvas>
+        <div>
+            <button onclick="testClear()">Test Clear</button>
+            <button onclick="testLine()">Test Line</button>
+            <button onclick="testSquare()">Test Square</button>
+            <button onclick="testCircle()">Test Circle</button>
+            <button onclick="testColors()">Test Colors</button>
+        </div>
+        <div id="canvas-log" class="log"></div>
+    </div>
+
+    <div class="section">
+        <h2>3. Tab Switching Test</h2>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="code">Code Tab</button>
+            <button class="tab-btn" data-tab="canvas">Canvas Tab</button>
+        </div>
+        <div class="tab-content active" id="tab-code">
+            <p>This is the CODE tab content</p>
+        </div>
+        <div class="tab-content" id="tab-canvas">
+            <p>This is the CANVAS tab content</p>
+        </div>
+        <button onclick="testTabs()">Test Tab Switching</button>
+        <div id="tab-log" class="log"></div>
+    </div>
+
+    <div class="section">
+        <h2>4. Backend API Test</h2>
+        <button onclick="testAPI()">Test Turtle API</button>
+        <div id="api-log" class="log"></div>
+    </div>
+
+    <div class="section">
+        <h2>5. Full Integration Test</h2>
+        <button onclick="testIntegration()">Run Full Test</button>
+        <div id="integration-log" class="log"></div>
+    </div>
+
+    <script src="/static/js/tabs.js"></script>
+    <script src="/static/js/canvas.js"></script>
+    <script>
+        function log(elementId, message, type = 'info') {
+            const el = document.getElementById(elementId);
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            el.innerHTML += `<span class="${className}">[${new Date().toLocaleTimeString()}] ${message}</span>\n`;
+            el.scrollTop = el.scrollHeight;
+            console.log(message);
+        }
+
+        function testModules() {
+            const logId = 'module-log';
+            document.getElementById(logId).innerHTML = '';
+
+            log(logId, 'Testing module loading...', 'info');
+
+            if (typeof PanelTabs !== 'undefined') {
+                log(logId, '✓ PanelTabs module loaded', 'success');
+            } else {
+                log(logId, '✗ PanelTabs module NOT loaded', 'error');
+            }
+
+            if (typeof TurtleCanvas !== 'undefined') {
+                log(logId, '✓ TurtleCanvas module loaded', 'success');
+            } else {
+                log(logId, '✗ TurtleCanvas module NOT loaded', 'error');
+            }
+
+            log(logId, 'Initializing modules...', 'info');
+            try {
+                PanelTabs.init();
+                log(logId, '✓ PanelTabs initialized', 'success');
+            } catch (e) {
+                log(logId, '✗ PanelTabs init failed: ' + e.message, 'error');
+            }
+
+            try {
+                TurtleCanvas.init();
+                log(logId, '✓ TurtleCanvas initialized', 'success');
+            } catch (e) {
+                log(logId, '✗ TurtleCanvas init failed: ' + e.message, 'error');
+            }
+        }
+
+        function testClear() {
+            const logId = 'canvas-log';
+            log(logId, 'Testing clear...', 'info');
+            try {
+                TurtleCanvas.clear();
+                log(logId, '✓ Clear successful', 'success');
+            } catch (e) {
+                log(logId, '✗ Clear failed: ' + e.message, 'error');
+            }
+        }
+
+        function testLine() {
+            const logId = 'canvas-log';
+            log(logId, 'Testing line drawing...', 'info');
+            const commands = [
+                {type: 'forward', distance: 150}
+            ];
+            try {
+                TurtleCanvas.executeCommands(commands);
+                log(logId, '✓ Line drawn', 'success');
+            } catch (e) {
+                log(logId, '✗ Line failed: ' + e.message, 'error');
+            }
+        }
+
+        function testSquare() {
+            const logId = 'canvas-log';
+            log(logId, 'Testing square...', 'info');
+            const commands = [
+                {type: 'forward', distance: 100},
+                {type: 'right', angle: 90},
+                {type: 'forward', distance: 100},
+                {type: 'right', angle: 90},
+                {type: 'forward', distance: 100},
+                {type: 'right', angle: 90},
+                {type: 'forward', distance: 100}
+            ];
+            try {
+                TurtleCanvas.executeCommands(commands);
+                log(logId, '✓ Square drawn', 'success');
+            } catch (e) {
+                log(logId, '✗ Square failed: ' + e.message, 'error');
+            }
+        }
+
+        function testCircle() {
+            const logId = 'canvas-log';
+            log(logId, 'Testing circle...', 'info');
+            const commands = [
+                {type: 'pencolor', color: 'blue'},
+                {type: 'circle', radius: 60}
+            ];
+            try {
+                TurtleCanvas.executeCommands(commands);
+                log(logId, '✓ Circle drawn', 'success');
+            } catch (e) {
+                log(logId, '✗ Circle failed: ' + e.message, 'error');
+            }
+        }
+
+        function testColors() {
+            const logId = 'canvas-log';
+            log(logId, 'Testing colors...', 'info');
+            const commands = [
+                {type: 'pencolor', color: 'red'},
+                {type: 'forward', distance: 50},
+                {type: 'pencolor', color: 'green'},
+                {type: 'forward', distance: 50},
+                {type: 'pencolor', color: 'blue'},
+                {type: 'forward', distance: 50}
+            ];
+            try {
+                TurtleCanvas.executeCommands(commands);
+                log(logId, '✓ Colors drawn', 'success');
+            } catch (e) {
+                log(logId, '✗ Colors failed: ' + e.message, 'error');
+            }
+        }
+
+        function testTabs() {
+            const logId = 'tab-log';
+            document.getElementById(logId).innerHTML = '';
+            log(logId, 'Testing tab switching...', 'info');
+
+            try {
+                PanelTabs.switchTab('canvas');
+                log(logId, '✓ Switched to canvas tab', 'success');
+
+                setTimeout(() => {
+                    PanelTabs.switchTab('code');
+                    log(logId, '✓ Switched to code tab', 'success');
+                }, 1000);
+            } catch (e) {
+                log(logId, '✗ Tab switching failed: ' + e.message, 'error');
+            }
+        }
+
+        async function testAPI() {
+            const logId = 'api-log';
+            document.getElementById(logId).innerHTML = '';
+            log(logId, 'Testing backend API...', 'info');
+
+            const code = 'import turtle\\nturtle.forward(100)\\nturtle.right(90)\\nturtle.forward(100)';
+
+            try {
+                const response = await fetch('/api/run', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({code: code})
+                });
+
+                const data = await response.json();
+                log(logId, '✓ API responded', 'success');
+                log(logId, 'Response: ' + JSON.stringify(data, null, 2), 'info');
+
+                if (data.turtle_commands && data.turtle_commands.length > 0) {
+                    log(logId, `✓ Received ${data.turtle_commands.length} turtle commands`, 'success');
+                } else {
+                    log(logId, '✗ No turtle commands in response', 'error');
+                }
+            } catch (e) {
+                log(logId, '✗ API test failed: ' + e.message, 'error');
+            }
+        }
+
+        async function testIntegration() {
+            const logId = 'integration-log';
+            document.getElementById(logId).innerHTML = '';
+            log(logId, 'Running full integration test...', 'info');
+
+            // Step 1: Initialize
+            log(logId, 'Step 1: Initializing modules...', 'info');
+            try {
+                TurtleCanvas.init();
+                PanelTabs.init();
+                log(logId, '✓ Modules initialized', 'success');
+            } catch (e) {
+                log(logId, '✗ Initialization failed: ' + e.message, 'error');
+                return;
+            }
+
+            // Step 2: Call API
+            log(logId, 'Step 2: Calling backend API...', 'info');
+            const code = 'import turtle\\nturtle.forward(100)\\nturtle.right(90)\\nturtle.forward(100)';
+
+            try {
+                const response = await fetch('/api/run', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({code: code})
+                });
+
+                const data = await response.json();
+                log(logId, '✓ API call successful', 'success');
+
+                // Step 3: Execute commands
+                if (data.turtle_commands && data.turtle_commands.length > 0) {
+                    log(logId, `Step 3: Executing ${data.turtle_commands.length} commands...`, 'info');
+                    TurtleCanvas.clear();
+                    TurtleCanvas.executeCommands(data.turtle_commands);
+                    log(logId, '✓ Commands executed', 'success');
+                    log(logId, '✓✓✓ FULL INTEGRATION TEST PASSED ✓✓✓', 'success');
+                } else {
+                    log(logId, '✗ No turtle commands received', 'error');
+                }
+            } catch (e) {
+                log(logId, '✗ Integration test failed: ' + e.message, 'error');
+            }
+        }
+
+        // Auto-run module test on load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(testModules, 500);
+        });
+    </script>
+</body>
+</html>

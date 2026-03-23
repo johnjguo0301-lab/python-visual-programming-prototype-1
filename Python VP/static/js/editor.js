@@ -29,29 +29,19 @@ const Editor = (() => {
         var lastSelectedCategory = null;
         var toolboxEl = workspace.getToolbox();
         if (toolboxEl) {
-            var origSelect = toolboxEl.selectItemByPosition.bind(toolboxEl);
-            toolboxEl.selectItemByPosition = function(position) {
-                var items = toolboxEl.getToolboxItems();
-                var item = items[position];
-                if (item && item === lastSelectedCategory) {
-                    // Re-clicked same category — close flyout
-                    workspace.getFlyout().hide();
-                    toolboxEl.clearSelection();
-                    lastSelectedCategory = null;
-                } else {
-                    origSelect(position);
-                    lastSelectedCategory = item;
-                }
-            };
             // Override setSelectedItem for click-based selection
             var origSetSelected = toolboxEl.setSelectedItem.bind(toolboxEl);
             toolboxEl.setSelectedItem = function(oldItem, newItem) {
-                if (newItem && newItem === lastSelectedCategory) {
+                // Check if clicking the same category that's currently selected
+                var currentSelected = toolboxEl.getSelectedItem();
+                if (newItem && currentSelected && newItem === currentSelected && workspace.getFlyout().isVisible()) {
+                    // Re-clicked same category while flyout is visible — close it
                     workspace.getFlyout().hide();
                     toolboxEl.clearSelection();
                     lastSelectedCategory = null;
                     return;
                 }
+                // Normal selection - let Blockly handle it
                 origSetSelected(oldItem, newItem);
                 lastSelectedCategory = newItem;
             };
@@ -87,6 +77,18 @@ const Editor = (() => {
         if (/\bsys\./.test(code) && !/^import sys$/m.test(code)) {
             imports.push('import sys');
         }
+        // Check for turtle.* usage
+        if (/\bturtle\./.test(code) && !/^import turtle$/m.test(code)) {
+            imports.push('import turtle');
+        }
+        // Check for plt.* usage (matplotlib)
+        if (/\bplt\./.test(code) && !/^import matplotlib\.pyplot as plt$/m.test(code)) {
+            imports.push('import matplotlib.pyplot as plt');
+        }
+        // Check for Processing functions (size, background, ellipse, rect, etc.)
+        if (/\b(def setup\(\)|def draw\(\)|size\(|background\(|ellipse\(|rect\(|fill\(|stroke\(|line\(|triangle\(|circle\(|noFill\(|noStroke\(|strokeWeight\()/.test(code)) {
+            // Processing doesn't need imports, but we detect it's being used
+        }
         if (imports.length > 0) {
             return imports.join('\n') + '\n\n' + code;
         }
@@ -97,6 +99,10 @@ const Editor = (() => {
     function generateFromEvents() {
         if (!workspace) return '';
         const generator = python.pythonGenerator;
+
+        // Initialize the generator with the workspace
+        generator.init(workspace);
+
         var topBlocks = workspace.getTopBlocks(true);
         var codeChunks = [];
         for (var i = 0; i < topBlocks.length; i++) {
@@ -107,9 +113,14 @@ const Editor = (() => {
             if (block.type === 'event_start') {
                 var next = block.getNextBlock();
                 if (next) {
+                    console.log('Generating code for block:', next.type);
                     var code = generator.blockToCode(next);
+                    console.log('Generated code:', code);
                     if (typeof code === 'string' && code.trim()) {
                         codeChunks.push(code);
+                    } else if (Array.isArray(code)) {
+                        console.warn('Block returned array instead of string:', next.type, code);
+                        codeChunks.push(code[0] || '');
                     }
                 }
             } else {

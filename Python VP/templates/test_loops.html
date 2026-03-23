@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loop Block Test</title>
+    <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/python_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/msg/en.js"></script>
+</head>
+<body>
+    <h1>Loop Block Test</h1>
+    <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+    <pre id="code"></pre>
+
+    <script src="/static/js/blocks/loops.js"></script>
+    <script>
+        const workspace = Blockly.inject('blocklyDiv', {
+            toolbox: {
+                kind: 'flyoutToolbox',
+                contents: [
+                    { kind: 'block', type: 'loop_for_range' },
+                    { kind: 'block', type: 'math_number' }
+                ]
+            }
+        });
+
+        workspace.addChangeListener(() => {
+            const code = python.pythonGenerator.workspaceToCode(workspace);
+            document.getElementById('code').textContent = code || '(no code generated)';
+            console.log('Generated code:', code);
+        });
+
+        console.log('Loop blocks registered:', {
+            loop_for_range: python.pythonGenerator.forBlock['loop_for_range'],
+            loop_for_in: python.pythonGenerator.forBlock['loop_for_in'],
+            loop_while: python.pythonGenerator.forBlock['loop_while'],
+            loop_while_true: python.pythonGenerator.forBlock['loop_while_true']
+        });
+    </script>
+</body>
+</html>
