@@ -3,8 +3,7 @@
 import { useEffect, useRef, MutableRefObject } from "react";
 import { toolbox } from "@/lib/toolbox";
 import { registerBlocks } from "@/lib/blocks";
-import "@/lib/types"; // Import type declarations
-import type { BlocklyWorkspace, BlocklyBlock } from "@/lib/types";
+import type { BlocklyWorkspace } from "@/lib/types";
 
 interface BlocklyEditorProps {
   onCodeChange: (code: string) => void;

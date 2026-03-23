@@ -46,6 +46,13 @@ export interface GeneratorType {
   INDENT: string;
 }
 
+export interface PyodideInterface {
+  runPythonAsync: (code: string) => Promise<unknown>;
+  setStdout: (opts: { batched: (text: string) => void }) => void;
+  setStderr: (opts: { batched: (text: string) => void }) => void;
+}
+
+// Augment the Window interface
 declare global {
   interface Window {
     Blockly: {
@@ -74,8 +81,5 @@ declare global {
   }
 }
 
-export interface PyodideInterface {
-  runPythonAsync: (code: string) => Promise<unknown>;
-  setStdout: (opts: { batched: (text: string) => void }) => void;
-  setStderr: (opts: { batched: (text: string) => void }) => void;
-}
+// This empty export makes this file a module
+export {};

@@ -1,6 +1,5 @@
 // Block definitions and Python generators for Python Visual Programming
 
-import "./types"; // Import global type declarations
 import type { BlockType, GeneratorType } from "./types";
 
 export function registerBlocks() {
