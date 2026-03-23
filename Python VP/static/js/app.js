@@ -44,6 +44,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.getElementById('btn-stop').addEventListener('click', () => Runner.stop());
     document.getElementById('btn-clear').addEventListener('click', () => Runner.clearConsole());
+    
+    // Scratch-style flag buttons in header
+    var runFlagBtn = document.getElementById('btn-run-flag');
+    var stopFlagBtn = document.getElementById('btn-stop-flag');
+    if (runFlagBtn) {
+        runFlagBtn.addEventListener('click', () => {
+            Runner.run(Editor.getCode());
+        });
+    }
+    if (stopFlagBtn) {
+        stopFlagBtn.addEventListener('click', () => Runner.stop());
+    }
+    
+    // Secondary tab navigation
+    document.querySelectorAll('.secondary-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.secondary-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
+    // Join/Sign in buttons (show auth modal)
+    var joinBtn = document.getElementById('btn-join');
+    var signinBtn = document.getElementById('btn-signin');
+    if (joinBtn) {
+        joinBtn.addEventListener('click', function() {
+            Auth.showModal('register');
+        });
+    }
+    if (signinBtn) {
+        signinBtn.addEventListener('click', function() {
+            Auth.showModal('login');
+        });
+    }
 
     // === Main Menu ===
     var menuBtn = document.getElementById('btn-menu');
