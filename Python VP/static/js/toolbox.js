@@ -1,9 +1,9 @@
-// Blockly toolbox category definitions
+// Blockly toolbox category definitions - Scratch-style colors
 const toolbox = {
     kind: 'categoryToolbox',
     contents: [
         {
-            kind: 'category', name: 'Events', colour: '#f59e0b',
+            kind: 'category', name: 'Events', colour: '#ffbf00',
             contents: [
                 { kind: 'block', type: 'event_start' },
                 { kind: 'block', type: 'event_key_pressed' },
@@ -19,7 +19,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Imports', colour: '#9b59b6',
+            kind: 'category', name: 'Imports', colour: '#9966ff',
             contents: [
                 { kind: 'block', type: 'import_module' },
                 { kind: 'block', type: 'from_import' },
@@ -27,7 +27,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Variables', colour: '#e91e8c',
+            kind: 'category', name: 'Variables', colour: '#ff8c1a',
             contents: [
                 { kind: 'block', type: 'variables_create' },
                 { kind: 'block', type: 'variables_set' },
@@ -35,7 +35,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Statements', colour: '#0d9488',
+            kind: 'category', name: 'Statements', colour: '#5cb1d6',
             contents: [
                 { kind: 'block', type: 'print_block' },
                 { kind: 'block', type: 'print_multi' },
@@ -47,7 +47,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Text', colour: '#14b8a6',
+            kind: 'category', name: 'Text', colour: '#5cb1d6',
             contents: [
                 { kind: 'block', type: 'text_literal' },
                 { kind: 'block', type: 'text_concat' },
@@ -61,7 +61,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Math', colour: '#3b82f6',
+            kind: 'category', name: 'Math', colour: '#59c059',
             contents: [
                 { kind: 'block', type: 'math_number' },
                 { kind: 'block', type: 'math_arithmetic' },
@@ -88,7 +88,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Logic', colour: '#4682b4',
+            kind: 'category', name: 'Logic', colour: '#5cb1d6',
             contents: [
                 { kind: 'block', type: 'logic_if' },
                 { kind: 'block', type: 'logic_if_else' },
@@ -101,7 +101,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Lists', colour: '#4b0082',
+            kind: 'category', name: 'Lists', colour: '#ff6680',
             contents: [
                 { kind: 'block', type: 'lists_create_empty' },
                 { kind: 'block', type: 'lists_create_with' },
@@ -114,7 +114,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Loops', colour: '#22c55e',
+            kind: 'category', name: 'Loops', colour: '#ffab19',
             contents: [
                 {
                     kind: 'block',
@@ -130,7 +130,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Functions', colour: '#9b59b6',
+            kind: 'category', name: 'Functions', colour: '#ff6680',
             contents: [
                 { kind: 'block', type: 'def_function' },
                 { kind: 'block', type: 'def_function_params' },
@@ -141,7 +141,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Classes', colour: '#0ea5e9',
+            kind: 'category', name: 'Classes', colour: '#9966ff',
             contents: [
                 { kind: 'block', type: 'class_define' },
                 { kind: 'block', type: 'class_subclass' },
@@ -155,7 +155,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Random', colour: '#f97316',
+            kind: 'category', name: 'Random', colour: '#59c059',
             contents: [
                 {
                     kind: 'block',
@@ -171,7 +171,7 @@ const toolbox = {
         },
         { kind: 'sep' },
         {
-            kind: 'category', name: 'Turtle', colour: '#10b981',
+            kind: 'category', name: 'Turtle', colour: '#4c97ff',
             contents: [
                 {
                     kind: 'block',
@@ -244,7 +244,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Graphs', colour: '#f97316',
+            kind: 'category', name: 'Graphs', colour: '#ff8c1a',
             contents: [
                 { kind: 'label', text: 'Data' },
                 { kind: 'block', type: 'graph_create_list' },
@@ -327,7 +327,7 @@ const toolbox = {
             ]
         },
         {
-            kind: 'category', name: 'Processing', colour: '#8b5cf6',
+            kind: 'category', name: 'Processing', colour: '#cf63cf',
             contents: [
                 { kind: 'label', text: 'Structure' },
                 { kind: 'block', type: 'processing_setup' },

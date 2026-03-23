@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Visual Programming</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Main Header (Scratch-style) -->
     <nav id="navbar">
         <div class="nav-left">
+            <span class="logo">Python VP</span>
             <div class="menu-wrapper">
-                <button id="btn-menu" title="Menu">&#9776; Menu</button>
+                <button id="btn-menu" title="Menu">File</button>
                 <div id="main-menu" class="dropdown-menu" style="display:none;">
                     <div class="menu-item" id="menu-new">New Project</div>
                     <div class="menu-item" id="menu-save">Save Project</div>
@@ -25,37 +26,68 @@
                     <div class="menu-item" id="menu-settings">Settings</div>
                 </div>
             </div>
-            <span class="logo">Python VP</span>
             <input type="text" id="project-name" placeholder="Untitled Project" value="Untitled Project">
         </div>
         <div class="nav-center">
             <select id="theme-select" title="Color Theme">
-                <option value="catppuccin">Catppuccin</option>
+                <option value="scratch">Scratch (Default)</option>
+                <option value="scratchDark">Scratch Dark</option>
                 <option value="ocean">Ocean</option>
                 <option value="forest">Forest</option>
                 <option value="sunset">Sunset</option>
-                <option value="light">Light</option>
             </select>
         </div>
         <div class="nav-right">
             <span id="username-display"></span>
+            <button id="btn-join" style="background: rgba(255,255,255,0.25);">Join Python VP</button>
+            <button id="btn-signin">Sign in</button>
         </div>
     </nav>
+    
+    <!-- Secondary Tab Bar (Scratch-style Code/Costumes/Sounds) -->
+    <div id="secondary-tabs">
+        <button class="secondary-tab active" data-view="code">
+            <span class="secondary-tab-icon" style="background: #855cd6;"></span>
+            Code
+        </button>
+        <button class="secondary-tab" data-view="canvas">
+            <span class="secondary-tab-icon" style="background: #59c059;"></span>
+            Turtle
+        </button>
+        <button class="secondary-tab" data-view="graphs">
+            <span class="secondary-tab-icon" style="background: #ff8c1a;"></span>
+            Graphs
+        </button>
+        <div style="flex: 1;"></div>
+        <input type="text" id="block-search" placeholder="Search blocks..." autocomplete="off">
+        <button id="btn-cleanup" title="Clean up blocks">Clean Up</button>
+        <div class="scratch-controls">
+            <button class="scratch-flag" id="btn-run-flag" title="Run"></button>
+            <button class="scratch-stop" id="btn-stop-flag" title="Stop"></button>
+        </div>
+    </div>
+    
     <!-- Editor Area -->
     <div id="editor-area">
         <div id="blockly-container">
-            <div id="blockly-toolbar">
-                <input type="text" id="block-search" placeholder="Search blocks..." autocomplete="off">
-                <button id="btn-cleanup" title="Clean up blocks">Clean Up</button>
-            </div>
             <div id="blockly-div"></div>
             <button id="btn-toggle-controls" title="Toggle controls">...</button>
         </div>
         <button id="btn-toggle-code" title="Toggle code panel">&rsaquo;</button>
         <div id="code-panel">
+            <!-- Stage Header (Scratch-style) -->
+            <div class="stage-header">
+                <div class="stage-size-controls">
+                    <button class="stage-size-btn" title="Small stage">S</button>
+                    <button class="stage-size-btn active" title="Large stage">L</button>
+                    <button class="stage-size-btn" title="Fullscreen">F</button>
+                </div>
+            </div>
+            
+            <!-- Stage/Preview Content -->
             <div class="panel-header">
                 <div class="panel-tabs">
-                    <button class="tab-btn active" data-tab="code">Code</button>
+                    <button class="tab-btn active" data-tab="code">Output</button>
                     <button class="tab-btn" data-tab="canvas">Turtle</button>
                     <button class="tab-btn" data-tab="graphs">Graphs</button>
                     <button class="tab-btn" data-tab="processing">Processing</button>
@@ -65,21 +97,46 @@
                 <pre><code id="code-preview" class="language-python"></code></pre>
             </div>
             <div class="tab-content" id="tab-canvas">
-                <canvas id="turtle-canvas" width="600" height="600"></canvas>
+                <canvas id="turtle-canvas" width="340" height="280"></canvas>
                 <div class="canvas-controls">
                     <button id="btn-clear-canvas">Clear Canvas</button>
                 </div>
             </div>
             <div class="tab-content" id="tab-graphs">
-                <canvas id="graphs-canvas" width="600" height="600"></canvas>
+                <canvas id="graphs-canvas" width="340" height="280"></canvas>
                 <div class="canvas-controls">
                     <button id="btn-clear-graphs">Clear Graphs</button>
                 </div>
             </div>
             <div class="tab-content" id="tab-processing">
-                <canvas id="processing-canvas" width="400" height="400"></canvas>
+                <canvas id="processing-canvas" width="340" height="280"></canvas>
                 <div class="canvas-controls">
                     <button id="btn-clear-processing">Clear Processing</button>
+                </div>
+            </div>
+            
+            <!-- Sprite Info Panel (Scratch-style) -->
+            <div class="sprite-panel">
+                <div class="sprite-info">
+                    <div class="sprite-thumbnail">
+                        <svg width="40" height="40" viewBox="0 0 40 40">
+                            <circle cx="20" cy="20" r="15" fill="#855cd6"/>
+                            <text x="20" y="25" text-anchor="middle" fill="white" font-size="14">Py</text>
+                        </svg>
+                    </div>
+                    <div class="sprite-details">
+                        <input type="text" class="sprite-name-input" value="Script1" placeholder="Sprite name">
+                        <div class="sprite-coords">
+                            <div class="sprite-coord">
+                                <span>x</span>
+                                <input type="number" value="0">
+                            </div>
+                            <div class="sprite-coord">
+                                <span>y</span>
+                                <input type="number" value="0">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
