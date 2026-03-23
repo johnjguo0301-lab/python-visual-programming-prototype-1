@@ -1,37 +1,7 @@
 // Block definitions and Python generators for Python Visual Programming
 
-declare global {
-  interface Window {
-    Blockly: {
-      common: {
-        defineBlocksWithJsonArray: (blocks: unknown[]) => void;
-      };
-    };
-    python: {
-      pythonGenerator: {
-        forBlock: Record<string, (block: BlockType, generator: GeneratorType) => string | [string, number]>;
-        ORDER_NONE: number;
-        ORDER_ATOMIC: number;
-        ORDER_FUNCTION_CALL: number;
-        INDENT: string;
-      };
-    };
-  }
-}
-
-interface BlockType {
-  getFieldValue: (name: string) => string;
-  getNextBlock: () => BlockType | null;
-}
-
-interface GeneratorType {
-  statementToCode: (block: BlockType, name: string) => string;
-  valueToCode: (block: BlockType, name: string, order: number) => string;
-  ORDER_NONE: number;
-  ORDER_ATOMIC: number;
-  ORDER_FUNCTION_CALL: number;
-  INDENT: string;
-}
+import "./types"; // Import global type declarations
+import type { BlockType, GeneratorType } from "./types";
 
 export function registerBlocks() {
   if (typeof window === "undefined") return;

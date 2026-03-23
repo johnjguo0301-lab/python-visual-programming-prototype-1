@@ -3,66 +3,8 @@
 import { useEffect, useRef, MutableRefObject } from "react";
 import { toolbox } from "@/lib/toolbox";
 import { registerBlocks } from "@/lib/blocks";
-
-declare global {
-  interface Window {
-    Blockly: typeof Blockly;
-    python: {
-      pythonGenerator: {
-        forBlock: Record<string, unknown>;
-        init: (workspace: unknown) => void;
-        statementToCode: (block: unknown, name: string) => string;
-        valueToCode: (block: unknown, name: string, order: number) => string;
-        blockToCode: (block: unknown) => string | [string, number];
-        ORDER_NONE: number;
-        ORDER_ATOMIC: number;
-        ORDER_FUNCTION_CALL: number;
-        INDENT: string;
-      };
-    };
-  }
-}
-
-// Blockly types
-declare const Blockly: {
-  inject: (container: string | Element, options: unknown) => BlocklyWorkspace;
-  Theme: {
-    defineTheme: (name: string, options: unknown) => unknown;
-  };
-  Themes: {
-    Classic: unknown;
-  };
-  svgResize: (workspace: BlocklyWorkspace) => void;
-  serialization: {
-    workspaces: {
-      save: (workspace: BlocklyWorkspace) => unknown;
-      load: (state: unknown, workspace: BlocklyWorkspace) => void;
-    };
-  };
-  common: {
-    defineBlocksWithJsonArray: (blocks: unknown[]) => void;
-  };
-};
-
-interface BlocklyWorkspace {
-  addChangeListener: (callback: () => void) => void;
-  getTopBlocks: (ordered: boolean) => BlocklyBlock[];
-  clear: () => void;
-  cleanUp: () => void;
-  getFlyout: () => { isVisible: () => boolean; hide: () => void; autoClose: boolean };
-  getToolbox: () => {
-    setSelectedItem: (oldItem: unknown, newItem: unknown) => void;
-    getSelectedItem: () => unknown;
-    clearSelection: () => void;
-  };
-  getParentSvg: () => SVGElement;
-}
-
-interface BlocklyBlock {
-  type: string;
-  getNextBlock: () => BlocklyBlock | null;
-  getFieldValue: (name: string) => string;
-}
+import "@/lib/types"; // Import type declarations
+import type { BlocklyWorkspace, BlocklyBlock } from "@/lib/types";
 
 interface BlocklyEditorProps {
   onCodeChange: (code: string) => void;
@@ -85,12 +27,14 @@ export default function BlocklyEditor({ onCodeChange, workspaceRef }: BlocklyEdi
       }
 
       initialized.current = true;
+      
+      const Blockly = window.Blockly;
 
       // Register custom blocks
       registerBlocks();
 
       // Create theme
-      const darkTheme = Blockly.Theme.defineTheme("scratchTheme", {
+      const scratchTheme = Blockly.Theme.defineTheme("scratchTheme", {
         base: Blockly.Themes.Classic,
         componentStyles: {
           workspaceBackgroundColour: "#ffffff",
@@ -118,7 +62,7 @@ export default function BlocklyEditor({ onCodeChange, workspaceRef }: BlocklyEdi
         },
         trashcan: true,
         renderer: "zelos",
-        theme: darkTheme,
+        theme: scratchTheme,
       });
 
       workspaceRef.current = workspace;

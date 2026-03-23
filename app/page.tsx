@@ -1,11 +1,41 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/navbar";
 import SecondaryTabs from "@/components/secondary-tabs";
-import BlocklyEditor from "@/components/blockly-editor";
-import StagePanel from "@/components/stage-panel";
 import Console from "@/components/console";
+
+// Dynamically import components that need Blockly
+const BlocklyEditor = dynamic(() => import("@/components/blockly-editor"), {
+  ssr: false,
+  loading: () => (
+    <div 
+      className="flex items-center justify-center h-full"
+      style={{ background: "white" }}
+    >
+      <div className="text-center">
+        <div 
+          className="w-12 h-12 rounded-full mx-auto mb-4 animate-pulse"
+          style={{ background: "var(--accent)" }}
+        />
+        <p style={{ color: "var(--text-muted)" }}>Loading editor...</p>
+      </div>
+    </div>
+  ),
+});
+
+const StagePanel = dynamic(() => import("@/components/stage-panel"), {
+  ssr: false,
+  loading: () => (
+    <div 
+      className="flex items-center justify-center h-full"
+      style={{ background: "var(--bg-surface)" }}
+    >
+      <p style={{ color: "var(--text-muted)" }}>Loading...</p>
+    </div>
+  ),
+});
 
 export default function Home() {
   const [code, setCode] = useState<string>("");
@@ -16,6 +46,7 @@ export default function Home() {
   const [consoleOutput, setConsoleOutput] = useState<Array<{ text: string; type: "stdout" | "stderr" }>>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [pyodideStatus, setPyodideStatus] = useState("Loading Python...");
+  const [isClient, setIsClient] = useState(false);
   
   // Canvas refs for turtle, graphs, processing
   const turtleCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -26,16 +57,23 @@ export default function Home() {
   const pyodideRef = useRef<unknown>(null);
   const workspaceRef = useRef<unknown>(null);
 
+  // Ensure we're on client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Initialize Pyodide
   useEffect(() => {
+    if (!isClient) return;
+    
     const initPyodide = async () => {
-      if (typeof window !== "undefined" && (window as unknown as { loadPyodide: unknown }).loadPyodide) {
+      if (typeof window !== "undefined" && (window as Window & { loadPyodide?: () => Promise<unknown> }).loadPyodide) {
         try {
-          const pyodide = await ((window as unknown as { loadPyodide: () => Promise<unknown> }).loadPyodide)();
+          const pyodide = await ((window as Window & { loadPyodide: () => Promise<unknown> }).loadPyodide)();
           pyodideRef.current = pyodide;
           setPyodideStatus("Python ready");
         } catch (err) {
-          console.error("Failed to load Pyodide:", err);
+          console.error("[v0] Failed to load Pyodide:", err);
           setPyodideStatus("Python failed to load");
         }
       }
@@ -43,15 +81,16 @@ export default function Home() {
     
     // Wait for script to load
     const checkAndInit = () => {
-      if ((window as unknown as { loadPyodide: unknown }).loadPyodide) {
+      if ((window as Window & { loadPyodide?: unknown }).loadPyodide) {
         initPyodide();
       } else {
-        setTimeout(checkAndInit, 100);
+        setTimeout(checkAndInit, 500);
       }
     };
     
-    checkAndInit();
-  }, []);
+    // Start checking after a delay to let scripts load
+    setTimeout(checkAndInit, 1000);
+  }, [isClient]);
 
   const handleCodeChange = useCallback((newCode: string) => {
     setCode(newCode);
@@ -66,7 +105,12 @@ export default function Home() {
   }, []);
 
   const runCode = useCallback(async () => {
-    if (isRunning || !pyodideRef.current) return;
+    if (isRunning || !pyodideRef.current) {
+      if (!pyodideRef.current) {
+        appendOutput("Python is still loading. Please wait...\n", "stderr");
+      }
+      return;
+    }
     if (!code.trim()) {
       appendOutput("No code to run. Drag some blocks first!\n", "stderr");
       return;
@@ -87,6 +131,7 @@ export default function Home() {
       pyodide.setStderr({ batched: (text: string) => appendOutput(text, "stderr") });
       
       await pyodide.runPythonAsync(code);
+      appendOutput("\n--- Program finished ---\n", "stdout");
     } catch (err) {
       appendOutput(`Error: ${err}\n`, "stderr");
     } finally {
@@ -95,7 +140,6 @@ export default function Home() {
   }, [code, isRunning, appendOutput, clearConsole]);
 
   const stopCode = useCallback(() => {
-    // Pyodide doesn't support interruption directly, but we can signal to stop
     setIsRunning(false);
     appendOutput("--- Execution stopped ---\n", "stderr");
   }, [appendOutput]);
@@ -108,11 +152,12 @@ export default function Home() {
 
   return (
     <div 
-      className={`h-screen flex flex-col ${theme === "dark" ? "dark" : ""}`}
+      className={`h-screen ${theme === "dark" ? "dark" : ""}`}
       style={{ 
         display: "grid", 
         gridTemplateRows: "56px 48px 1fr 180px",
-        overflow: "hidden"
+        overflow: "hidden",
+        background: "var(--bg-base)"
       }}
     >
       <Navbar
@@ -139,10 +184,12 @@ export default function Home() {
           background: "var(--bg-deep)"
         }}
       >
-        <BlocklyEditor
-          onCodeChange={handleCodeChange}
-          workspaceRef={workspaceRef}
-        />
+        {isClient && (
+          <BlocklyEditor
+            onCodeChange={handleCodeChange}
+            workspaceRef={workspaceRef}
+          />
+        )}
         
         <button
           onClick={() => setIsCodePanelVisible(!isCodePanelVisible)}
@@ -150,14 +197,14 @@ export default function Home() {
           style={{
             right: isCodePanelVisible ? "380px" : "0",
             background: "var(--accent)",
-            borderRadius: "var(--radius-sm) 0 0 var(--radius-sm)",
+            borderRadius: "8px 0 0 8px",
             border: "none"
           }}
         >
           {isCodePanelVisible ? "›" : "‹"}
         </button>
         
-        {isCodePanelVisible && (
+        {isCodePanelVisible && isClient && (
           <StagePanel
             code={code}
             activeTab={activeTab}

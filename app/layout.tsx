@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,16 +20,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        {/* Blockly */}
-        <script src="https://unpkg.com/blockly/blockly_compressed.js" defer></script>
-        <script src="https://unpkg.com/blockly/python_compressed.js" defer></script>
-        <script src="https://unpkg.com/blockly/msg/en.js" defer></script>
-        {/* Pyodide for client-side Python execution */}
-        <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js" defer></script>
-      </head>
       <body className="antialiased">
         {children}
+        {/* Blockly */}
+        <Script 
+          src="https://unpkg.com/blockly/blockly_compressed.js" 
+          strategy="beforeInteractive"
+        />
+        <Script 
+          src="https://unpkg.com/blockly/python_compressed.js" 
+          strategy="beforeInteractive"
+        />
+        <Script 
+          src="https://unpkg.com/blockly/msg/en.js" 
+          strategy="beforeInteractive"
+        />
+        {/* Pyodide for client-side Python execution */}
+        <Script 
+          src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js" 
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );
